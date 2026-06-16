@@ -1,0 +1,23 @@
+# @package _global_
+#
+# Multirun paired 170k local-checkpoint DINOv3-small backbones for a native ALOE
+# student.
+#
+#   pixi run python scripts/eval.py experiment=eval/embeddings/native_distilled_dinov3_170k_sweep
+
+defaults:
+  - /experiment/eval/embeddings/native_distilled_base
+  - /model/backbone@backbone.student: dinov3/aloe_dinov3_small_local_weights
+  - _self_
+
+tags: ["eval", "native", "distilled", "170k", "sweep"]
+
+logger:
+  name: ${hydra_runtime_choice:model/backbone@backbone.student,unknown}
+
+hydra:
+  mode: MULTIRUN
+  sweeper:
+    params:
+      data/dataset: imagenet1k
+      model/backbone@backbone.student: dinov3/aloe_dinov3_small_local_weights

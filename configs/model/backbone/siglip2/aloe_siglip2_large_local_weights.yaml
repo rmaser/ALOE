@@ -1,0 +1,7 @@
+defaults:
+  - /model/backbone/siglip2/aloe_siglip2_large@_here_
+  - _self_
+
+_target_: src.models.config.Siglip2Config
+load_pretrained_weights: false
+backbone_checkpoint: "${oc.env:CACHE_PATH}/aloe-align-once-to-explain/e2d0kp6b/checkpoints/last.ckpt"

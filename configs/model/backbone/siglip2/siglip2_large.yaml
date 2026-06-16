@@ -1,0 +1,9 @@
+_target_: src.models.config.Siglip2Config
+name: "google/siglip2-large-patch16-256" # Example
+type: "siglip2"
+feature_dim: 1024
+layers: 24
+patch_size: 16
+register_tokens: 0
+cls_token: false
+model_part: "vision"

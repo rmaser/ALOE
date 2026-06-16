@@ -1,0 +1,86 @@
+[workspace]
+authors = ["Raphael Maser <raphaelmaser@gmail.com>"]
+channels = ["conda-forge", "nvidia"]
+name = "aloe-align_once_to_explain"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+train_native_distill_siglip2_base = "python scripts/train.py experiment=native/distill_aloe_170k model/backbone@backbone.student=siglip2/aloe_siglip2_base_hub +hydra=submitit_4b200 -m"
+train_native_distill_siglip2_large = "python scripts/train.py experiment=native/distill_aloe_170k model/backbone@backbone.student=siglip2/aloe_siglip2_large_hub model/backbone@backbone.teacher=siglip2/siglip2_large +hydra=submitit_8b200 -m"
+train_native_distill_siglip2_so400m = "python scripts/train.py experiment=native/distill_aloe_170k model/backbone@backbone.student=siglip2/aloe_siglip2_so400m_hub model/backbone@backbone.teacher=siglip2/siglip2_so400m +hydra=submitit_8b200 -m"
+train_native_distill_siglip2_so400m_432 = "python scripts/train.py experiment=native/distill_aloe_170k model/backbone@backbone.student=siglip2/aloe_siglip2_so400m_432_hub model/backbone@backbone.teacher=siglip2/siglip2_so400m_432px +hydra=submitit_8b200 -m"
+train_native_distill_dinov3_small = "python scripts/train.py experiment=native/distill_aloe_170k model/backbone@backbone.student=dinov3/aloe_dinov3_small_hub model/backbone@backbone.teacher=dinov3/dinov3_small +hydra=submitit_4b200 -m"
+train_native_distill_dinov3_base = "python scripts/train.py experiment=native/distill_aloe_170k model/backbone@backbone.student=dinov3/aloe_dinov3_base_hub model/backbone@backbone.teacher=dinov3/dinov3_base +hydra=submitit_4b200 -m"
+train_native_distill_dinov3_large = "python scripts/train.py experiment=native/distill_aloe_170k model/backbone@backbone.student=dinov3/aloe_dinov3_large_hub model/backbone@backbone.teacher=dinov3/dinov3_large +hydra=submitit_8b200 -m"
+train_native_distill_google_vit_base = "python scripts/train.py experiment=native/distill_aloe_170k model/backbone@backbone.student=google_vit/aloe_vit_base_hub model/backbone@backbone.teacher=google_vit/google_vit_base +hydra=submitit_4b200 -m"
+eval_native_hf_all_hub_lp = "python scripts/eval.py experiment=eval/embeddings/native_hf_all_hub_lp +hydra=submitit_1h200 -m"
+eval_native_classifier = "python scripts/eval.py experiment=eval/classifier/native_hf +hydra=submitit_1h200 -m"
+eval_native_classifier_distilled_supervised = "python scripts/eval.py experiment=eval/classifier/native_distilled_supervised +hydra=submitit_1h200 -m"
+eval_hf_baseline = "python scripts/eval.py experiment=eval/embeddings/hf_baseline +hydra=submitit_1h200 -m"
+
+[dependencies]
+python = ">=3.12.0,<3.13"
+gxx = "*"
+ninja = "*"
+ipykernel = ">=7.2.0,<8"
+pytest = ">=9.0.2,<10"
+ruff = ">=0.15.9,<0.16"
+mypy = ">=1.19.1,<2"
+jupyterlab = ">=4.5.6,<5"
+setuptools = ">=75,<81"
+vulture = ">=2.16,<3"
+
+[feature.cuda.dependencies]
+cuda-nvcc = "13.0.*"
+cuda-version = "13.0.*"
+
+[feature.cuda.system-requirements]
+cuda = "13"
+
+[feature.cuda.pypi-dependencies]
+# Match the official PyTorch cu130 wheel set instead of the default PyPI build.
+torch = { version = "==2.10.0", index = "https://download.pytorch.org/whl/cu130" }
+torchvision = { version = "==0.25.0", index = "https://download.pytorch.org/whl/cu130" }
+
+
+
+[pypi-dependencies]
+
+lightning = ">=2.5.6,<3"
+hydra-core = ">=1.3.2,<2"
+pydantic = ">=2.12.4,<3"
+beartype = ">=0.22.6,<0.23"
+jaxtyping = ">=0.3.2,<0.4"
+loguru = ">=0.7.3,<0.8"
+hydra-submitit-launcher = ">=1.2.0,<2"
+datasets = ">=4.4.1,<5"
+transformers = ">=4.56.0,<4.57"
+wandb = ">=0.24,<1"
+einops = ">=0.8.1,<0.9"
+matplotlib = ">=3.10.8,<4"
+scikit-learn = ">=1.7.2,<2"
+bcos = ">=0.1.2, <0.2"
+lxt = ">=2.1, <3"
+captum = ">=0.8.0, <0.9"
+opencv-python = ">=4.11.0.86, <5"
+seaborn = ">=0.13.2, <0.14"
+cmasher = ">=1.9.2, <2"
+tiktoken = ">=0.12.0, <0.13"
+sentencepiece = ">=0.2.0, <0.3"
+ipywidgets = ">=8.1.8, <9"
+kornia = ">=0.8.2, <0.9"
+
+[activation.env]
+TOKENIZERS_PARALLELISM = "false"
+
+[feature.cuda.activation.env]
+CACHE_PATH = "${SCRATCH:?SCRATCH must be set}/ALOE/.cache"
+DATA_PATH = "${SCRATCH:?SCRATCH must be set}/data/huggingface/datasets"
+# Hugging Face uses its own env vars; CACHE_PATH/DATA_PATH are project-specific.
+HF_HUB_CACHE = "${SCRATCH:?SCRATCH must be set}/data/huggingface/hub"
+HF_DATASETS_CACHE = "${SCRATCH:?SCRATCH must be set}/data/huggingface/datasets"
+
+
+[environments]
+default = { features = ["cuda"], solve-group = "default" }

@@ -1,0 +1,11 @@
+# Frozen HF vision teacher for native ALOE distillation.
+
+load_weights_from_local_checkpoints: []
+load_weights_from_hf_checkpoints: []
+freeze_pretrained_weights: true
+keep_pretrained_weights_trainable: []
+compile: true
+compile_mode: default
+model_repo: teacher_model
+use_gradient_checkpointing: false
+strip_pooler: true

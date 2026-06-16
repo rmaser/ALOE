@@ -1,0 +1,25 @@
+# @package _global_
+# Shared base for embeddings eval of native ALOE models.
+#
+# The selected backbone config now owns its loading recipe directly (Hub weights,
+# mapped HF init, or local checkpoints).
+
+defaults:
+  - /experiment/eval/embeddings/base_config
+  - /model/factory/native_hub_vision_student_eval@model_factory
+
+model_factory:
+  target_model_config: ${backbone.student}
+
+data:
+  batch_size: 256
+  transform:
+    image_processor_trust_remote_code: true
+
+
+evaluators:
+  linear_probe:
+    loss_fn:
+      _target_: bcos.modules.losses.UniformOffLabelsBCEWithLogitsLoss
+      _partial_: true
+    b_classifier: 2.0

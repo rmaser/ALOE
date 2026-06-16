@@ -1,0 +1,21 @@
+# Base eval config
+# Use with experiment configs: pixi run python scripts/eval.py experiment=eval/embeddings
+
+defaults:
+  - data: default
+  - logger: wandb
+  - _self_
+  - experiment: null
+
+# Evaluators dict (populated by experiment configs)
+evaluators: {}
+
+# Which evaluators to run
+eval_list: []
+
+hydra:
+  run:
+    dir: ${oc.env:CACHE_PATH}/hydra_outputs/eval/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  sweep:
+    dir: ${oc.env:CACHE_PATH}/hydra_multirun/eval/${now:%Y-%m-%d}/${now:%H-%M-%S}
+    subdir: ${hydra.job.num}

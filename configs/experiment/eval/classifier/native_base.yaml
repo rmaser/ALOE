@@ -1,0 +1,16 @@
+# @package _global_
+# Shared base for classifier eval of native ALOE models.
+
+defaults:
+  - /experiment/eval/classifier/base_config
+  - /model/factory/native_hub_vision_student_eval@model_factory
+  - override /explainer: chefer
+
+model_factory:
+  target_model_config: ${backbone.student}
+
+data:
+  batch_size: 32
+  transform:
+    image_processor_trust_remote_code: true
+    is_bcos: false

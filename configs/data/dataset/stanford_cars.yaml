@@ -1,0 +1,5 @@
+# @package data.dataset
+_target_: src.data.datasets.config.DatasetConfig
+dataset_source: "hf"
+dataset_name: "tanganke/stanford_cars"
+num_classes: 196

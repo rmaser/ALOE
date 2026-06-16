@@ -1,0 +1,15 @@
+# @package _global_
+#
+# Extends ``native_hub_distill_converged_170k`` to a **300k-step** native-Hub
+# distillation run while keeping the same optimizer, batch size, and Slurm
+# resume defaults.
+#
+# Pair with ``override /scheduler: aloe_scheduler_300k`` so the scheduler length
+# matches ``trainer.max_steps``.
+#
+
+defaults:
+  - /task/native_hub_distill_converged_170k
+
+trainer:
+  max_steps: 300000

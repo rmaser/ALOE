@@ -1,0 +1,15 @@
+# @package _global_
+# Shared BCE-style classifier eval base for native ALOE models.
+
+defaults:
+  - /experiment/eval/classifier/native_base
+
+model_factory:
+  classifier_b: 2.0
+
+evaluators:
+  linear_probe:
+    loss_fn:
+      _target_: bcos.modules.losses.UniformOffLabelsBCEWithLogitsLoss
+      _partial_: true
+    b_classifier: 2.0

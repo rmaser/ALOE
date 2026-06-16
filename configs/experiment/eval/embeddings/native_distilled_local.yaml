@@ -1,0 +1,19 @@
+# @package _global_
+# Evaluate a native ALOE student loaded from its explicit local-checkpoint
+# backbone config. Override ``model/backbone@backbone.student`` as needed.
+
+defaults:
+  - /experiment/eval/embeddings/native_distilled_base
+  - /model/backbone@backbone.student: siglip2/aloe_siglip2_base_local_weights
+  - _self_
+
+tags: ["eval", "native", "distilled", "local_checkpoint"]
+
+logger:
+  name: ${hydra_runtime_choice:model/backbone@backbone.student,unknown}
+
+hydra:
+  mode: MULTIRUN
+  sweeper:
+    params:
+      data/dataset: imagenet1k

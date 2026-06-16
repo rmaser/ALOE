@@ -1,0 +1,15 @@
+defaults:
+  - dataset: yfcc15m
+  - transform: default
+
+_target_: src.data.datamodules.datamodule.BcosDataModule
+datamodule_config:
+  _target_: src.data.datamodules.config.DataModuleConfig
+  datasets:
+    - ${data.dataset}
+  transform_config: ${data.transform}
+  dataloader_config:
+    batch_size: ${data.batch_size}
+    num_workers: 10
+
+batch_size: 1024

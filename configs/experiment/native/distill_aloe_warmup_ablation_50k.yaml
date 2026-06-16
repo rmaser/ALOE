@@ -1,0 +1,46 @@
+# @package _global_
+#
+# Warmup-length ablation for native SigLIP2 distillation with a reduced constant plateau
+# to save compute while preserving the final 30k cosine tail.
+#
+#   pixi run python scripts/train.py experiment=native/distill_aloe_warmup_ablation_50k +hydra=submitit_4b200 -m
+#
+
+defaults:
+  - /experiment/native/distill_aloe_170k
+  - _self_
+
+tags: ["native", "distill-aloe", "warmup-ablation", "constant-50k"]
+
+ablation:
+  profile: w5k
+  profiles:
+    w1k:
+      warmup_steps: 1000
+      max_steps: 81000
+    w3k:
+      warmup_steps: 3000
+      max_steps: 83000
+    w5k:
+      warmup_steps: 5000
+      max_steps: 85000
+    w10k:
+      warmup_steps: 10000
+      max_steps: 90000
+
+trainer:
+  max_steps: ${ablation.profiles.${ablation.profile}.max_steps}
+
+scheduler:
+  warmup_steps: ${ablation.profiles.${ablation.profile}.warmup_steps}
+  constant_steps: 50000
+  cosine_steps: 30000
+
+logger:
+  name: ${backbone.student.name}__warmup_${scheduler.warmup_steps}__const_${scheduler.constant_steps}
+
+hydra:
+  mode: MULTIRUN
+  sweeper:
+    params:
+      ablation.profile: w1k,w3k,w5k,w10k

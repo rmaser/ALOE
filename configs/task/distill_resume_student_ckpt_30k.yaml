@@ -1,0 +1,30 @@
+# @package _global_
+#
+# 30k-step finetune recipe with student weights resumed from ``checkpoints[backbone]``.
+# Used by e.g. conv-stem periodic checkpoints and MSE finetuning from distilled students.
+#
+
+defaults:
+  - override /optimizer: adamw
+
+trainer:
+  max_epochs: -1
+  max_steps: 30000
+
+optimizer:
+  lr: 0.0003
+  weight_decay: 0.0
+
+data:
+  batch_size: 1024
+
+model:
+  cfg:
+    distillation_layers: ${select_distillation_layers:${backbone.student.layers}}
+
+student_factory:
+  load_weights_from_local_checkpoints:
+    - path: ${checkpoints[${backbone.student.name}].path}
+      patterns: ${checkpoints[${backbone.student.name}].patterns}
+
+resume_slurm: true

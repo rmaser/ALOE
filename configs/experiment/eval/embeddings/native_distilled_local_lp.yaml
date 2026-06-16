@@ -1,0 +1,18 @@
+# @package _global_
+# Train / evaluate a linear probe with the aggressive LP protocol on top of a
+# native ALOE student loaded from an explicit local-checkpoint backbone config.
+#
+# Example:
+#
+#   pixi run python scripts/eval.py \
+#       experiment=eval/embeddings/native_distilled_local_lp \
+#       model/backbone@backbone.student=dinov3/aloe_dinov3_base_local_weights
+
+defaults:
+  - /experiment/eval/embeddings/native_distilled_local
+  - override /evaluator@evaluators.linear_probe: linear_probe
+
+tags: ["eval", "native", "distilled", "local_checkpoint", "linear_probe"]
+
+logger:
+  name: ${hydra_runtime_choice:model/backbone@backbone.student,unknown}__lp

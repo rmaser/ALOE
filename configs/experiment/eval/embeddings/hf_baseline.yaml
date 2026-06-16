@@ -1,0 +1,34 @@
+# @package _global_
+# Evaluate plain Hugging Face baseline backbones with KNN + linear probe.
+#
+# This is the non-ALOE counterpart to ``native_hf.yaml``: it keeps the same
+# embeddings-eval / probe-training pipeline, but the selected backbones are the
+# vanilla HF configs (no aloe_* overlays, no ALOE weights).
+
+defaults:
+  - /experiment/eval/embeddings/base_config
+  - /model/factory/native_hub_vision_student_eval@model_factory
+  - /model/backbone@backbone.student: dinov3/dinov3_small
+
+tags: ["eval", "hf", "baseline", "native_backbone", "linear_probe"]
+
+model_factory:
+  target_model_config: ${backbone.student}
+
+data:
+  transform:
+    is_bcos: false
+    image_processor_trust_remote_code: false
+
+logger:
+  name: ${hydra_runtime_choice:model/backbone@backbone.student,unknown}__baseline_lp
+
+hydra:
+  mode: MULTIRUN
+  sweeper:
+    params:
+      data/dataset: imagenet1k
+      model/backbone@backbone.student: dinov3/dinov3_base #,siglip2/siglip2_base,google_vit/google_vit_base
+evaluators:
+  linear_probe:
+    use_bcos_head: false

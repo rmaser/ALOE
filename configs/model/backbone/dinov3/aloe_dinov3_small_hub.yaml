@@ -1,0 +1,6 @@
+defaults:
+  - /model/backbone/dinov3/aloe_dinov3_small@_here_
+  - _self_
+
+_target_: src.models.config.HFDinov3Config
+load_pretrained_weights: true

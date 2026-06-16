@@ -1,0 +1,6 @@
+defaults:
+  - /model/backbone/google_vit/aloe_vit_base@_here_
+  - _self_
+
+_target_: src.models.config.GoogleVitConfig
+load_pretrained_weights: true

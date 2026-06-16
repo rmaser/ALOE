@@ -1,0 +1,9 @@
+# @package _global_
+#
+# Same as ``native/distill_aloe_170k`` but adds the 432px-safe dataloader
+# fragment used by the SigLIP2 SO400M 432 launcher.
+#
+
+defaults:
+  - /experiment/native/distill_aloe_170k
+  - /task/native_hub_distill_432_safe

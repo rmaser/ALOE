@@ -1,0 +1,16 @@
+# Native ALOE DINOv3 **base** (B-cos) + ImageNet-1k linear-probe checkpoints.
+#
+# Inherits ``model/backbone/aloe_dinov3_base`` (Hub id, architecture, ``aloe_bcos_impl``).
+# Only classification head + checkpoint paths are defined here.
+#
+# Use as ``model/supervised@backbone.student=dinov3/aloe_dinov3_base_imagenet1k_lp`` (etc.) for supervised attribution / evaluation.
+# Override ``backbone_checkpoint`` / ``linear_probe_checkpoint`` for your runs.
+
+defaults:
+  - /model/backbone/dinov3/aloe_dinov3_base_local_weights@_here_
+  - _self_
+
+num_labels: 1000
+aloe_use_logit_layer: true
+# backbone_checkpoint: "${oc.env:CACHE_PATH}/aloe-align-once-to-explain/qsstausf/checkpoints/last.ckpt"
+linear_probe_checkpoint: "${oc.env:CACHE_PATH}/aloe-align-once-to-explain/ry85tqc6/checkpoints/best_lr=0.003.ckpt"

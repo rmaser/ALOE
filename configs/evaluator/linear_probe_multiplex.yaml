@@ -1,0 +1,4 @@
+defaults:
+  - linear_probe
+
+_target_: src.eval.linear_probe.MultiplexedLinearProbeEvaluator

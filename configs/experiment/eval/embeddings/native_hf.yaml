@@ -1,0 +1,16 @@
+# @package _global_
+# Evaluate a published native ALOE model with the HF-native factory path.
+
+defaults:
+  - /experiment/eval/embeddings/native_base
+  - /model/backbone@backbone.student: siglip2/aloe_siglip2_base_hub
+
+tags: ["eval", "native_hf", "native_aloe"]
+
+eval_list:
+  - knn
+  - linear_probe
+
+data:
+  transform:
+    is_bcos: false

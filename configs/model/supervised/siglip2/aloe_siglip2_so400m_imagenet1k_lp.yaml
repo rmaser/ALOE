@@ -1,0 +1,9 @@
+# Native ALOE SigLIP2 **SO400M** (B-cos) + ImageNet-1k linear-probe checkpoints.
+
+defaults:
+  - /model/backbone/siglip2/aloe_siglip2_so400m_local_weights@_here_
+  - _self_
+
+num_labels: 1000
+aloe_use_logit_layer: true
+linear_probe_checkpoint: "${oc.env:CACHE_PATH}/aloe-align-once-to-explain/q33kfq4j/checkpoints/best_lr=0.01.ckpt"

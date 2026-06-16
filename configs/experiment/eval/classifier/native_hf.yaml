@@ -1,0 +1,15 @@
+# @package _global_
+# Attribution / classifier eval for published native ALOE Hub models.
+
+defaults:
+  - /experiment/eval/classifier/native_bce_base
+  - /model/backbone@backbone.student: siglip2/aloe_siglip2_base_hub
+
+tags: ["eval", "native_hf", "classifier"]
+
+hydra:
+  mode: MULTIRUN
+  sweeper:
+    params:
+      data/dataset: imagenet1k
+      model/backbone@backbone.student: siglip2/aloe_siglip2_base_hub,siglip2/aloe_siglip2_large_hub,siglip2/aloe_siglip2_so400m_hub,siglip2/aloe_siglip2_so400m_432_hub,dinov3/aloe_dinov3_small_hub,dinov3/aloe_dinov3_base_hub,dinov3/aloe_dinov3_large_hub,google_vit/aloe_vit_base_hub

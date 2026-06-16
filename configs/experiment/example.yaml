@@ -1,0 +1,25 @@
+# @package _global_
+
+# to execute this experiment run:
+# python scripts/train.py experiment=example
+
+defaults:
+  - override /data: default
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["example", "debug"]
+
+seed: 12345
+
+trainer:
+  min_epochs: 1
+  max_epochs: 10
+  gradient_clip_val: 0.5
+
+optimizer:
+  lr: 0.002
+
+data:
+  batch_size: 64

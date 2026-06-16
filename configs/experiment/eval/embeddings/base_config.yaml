@@ -1,0 +1,30 @@
+# @package _global_
+
+# Embeddings-based evaluation (linear probe, knn, zero_shot)
+# Run with: pixi run python scripts/eval.py experiment=eval/embeddings
+
+defaults:
+  - /evaluator@evaluators.linear_probe: linear_probe
+  - /evaluator@evaluators.knn: knn
+  - /evaluator@evaluators.zero_shot: zero_shot
+  - override /data/dataset: imagenet1k
+
+eval_list:
+  - knn
+  # - zero_shot
+  - linear_probe
+
+data:
+  batch_size: 256
+  transform:
+    force_val_transforms_in_train: true
+
+# Hydra sweep configuration - dataset sweep only (backbone sweep is experiment-specific)
+hydra:
+  mode: MULTIRUN
+  sweeper:
+    params:
+      data/dataset: imagenet1k, caltech101, stanford_cars, cifar10, cifar100, dtd, oxford_flowers102, food101, sun397, fgvc_aircraft
+
+  # launcher:
+  #   array_parallelism: 8

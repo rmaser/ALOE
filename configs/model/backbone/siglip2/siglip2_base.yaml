@@ -1,0 +1,9 @@
+_target_: src.models.config.Siglip2Config
+name: "google/siglip2-base-patch16-224" # Example, need to verify
+type: "siglip2"
+feature_dim: 768
+layers: 12
+patch_size: 16
+register_tokens: 0
+cls_token: false
+model_part: "vision"

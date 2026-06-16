@@ -1,0 +1,9 @@
+_target_: src.models.config.GoogleVitConfig
+name: "google/vit-base-patch16-224"
+type: "google_vit"
+feature_dim: 768
+layers: 12
+patch_size: 16
+register_tokens: 0
+cls_token: true
+attention_target_modules: ["query.linear", "key.linear", "value.linear"]

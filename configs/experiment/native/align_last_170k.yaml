@@ -1,0 +1,24 @@
+# @package _global_
+#
+# Align-last block + pooler, cosine, **170k** + ``aloe_scheduler`` (native Hub student).
+# Loss defaults: ``objective/aloe_distill`` via ``/experiment/native/_distill_hf_native``.
+#
+#   pixi run python scripts/train.py experiment=native/align_last_170k
+#
+defaults:
+  - /task/native_hub_distill_converged_170k
+  - override /data: default
+  - override /scheduler: aloe_scheduler
+  - override /loss: cosine
+  - override /model/backbone@backbone.student: siglip2/aloe_siglip2_base_hub
+  - override /model/backbone@backbone.teacher: siglip2/siglip2_base
+
+optimizer:
+  lr: 0.0003
+  weight_decay: 0.0
+
+tags: ["native", "align-last", "170k"]
+
+model:
+  cfg:
+    distillation_layers: [-1]

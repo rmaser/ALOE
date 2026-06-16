@@ -1,0 +1,4 @@
+# @package scheduler
+target: torch.optim.lr_scheduler.OneCycleLR
+max_lr: ${optimizer.lr}
+# Add other parameters as needed, matching OneCycleLRConfig

@@ -1,0 +1,34 @@
+# @package _global_
+#
+# Canonical **long** conv-stem / SigLIP-style distillation run: 170k optimizer steps,
+# LR 3e-4, batch 1024, multi-block distill targets, Slurm resume on.
+#
+# Schedule length matches ``configs/scheduler/aloe_scheduler.yaml`` (5k warmup +
+# 135k constant + 30k cosine). Experiments still choose scheduler, loss, and model
+# preset via trailing ``override`` lines (e.g. ``aloe_scheduler`` + MSE for the
+# camera-ready full run, or ``aloe_scheduler`` only for cosine distill).
+#
+# This is training hyperparameters only — not ``model_factory`` construction (see
+# ``src/models/model_factory/model_factory.py`` for load/compile paths).
+#
+
+defaults:
+  - override /optimizer: adamw
+
+trainer:
+  max_epochs: -1
+  max_steps: 170000
+  check_val_every_n_epoch: null
+
+optimizer:
+  lr: 0.0003
+  weight_decay: 0.0
+
+data:
+  batch_size: 1024
+
+model:
+  cfg:
+    distillation_layers: ${select_distillation_layers:${backbone.student.layers}}
+
+resume_slurm: true

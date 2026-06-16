@@ -1,0 +1,2 @@
+target: src.training.scheduler.scheduler.create_warmup_cosine_scheduler
+warmup_epochs: 10000

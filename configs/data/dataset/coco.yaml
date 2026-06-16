@@ -1,0 +1,4 @@
+# @package data.dataset
+_target_: src.data.datasets.config.DatasetConfig
+dataset_source: "hf"
+dataset_name: "detection-datasets/coco"

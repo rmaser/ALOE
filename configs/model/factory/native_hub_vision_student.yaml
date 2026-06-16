@@ -1,0 +1,19 @@
+# Shared HF-native defaults for ALOE vision students.
+# Override `target_model_config` in the parent preset.
+#
+# Weight / init policy is read only from ``backbone.student`` (same structured config as
+# ``student_factory.target_model_config`` when set to ``${backbone.student}``). Entry configs
+# must use ``model/backbone@backbone.student: …``, not a bare ``model/backbone: …``.
+
+load_pretrained_weights: ${oc.select:backbone.student.load_pretrained_weights,true}
+hf_vision_init_checkpoint: ${oc.select:backbone.student.hf_vision_init_checkpoint,null}
+load_weights_from_local_checkpoints: ${local_weights_for_model:${oc.select:backbone.student.load_weights_from_local_checkpoints,null},${backbone.student.name}}
+load_weights_from_hf_checkpoints: []
+is_bcos: ${oc.select:backbone.student.is_bcos,false}
+freeze_pretrained_weights: false
+keep_pretrained_weights_trainable: []
+compile: true
+compile_mode: default
+model_repo: student_model
+use_gradient_checkpointing: true
+strip_pooler: true

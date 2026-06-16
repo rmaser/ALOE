@@ -1,0 +1,9 @@
+_target_: src.models.config.HFDinov3Config
+name: "facebook/dinov3-vitl16-pretrain-lvd1689m" # Example
+type: "dinov3"
+feature_dim: 1024
+layers: 24
+patch_size: 16
+register_tokens: 4
+cls_token: true
+model_part: "vision"

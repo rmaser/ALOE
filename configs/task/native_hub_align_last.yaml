@@ -1,0 +1,8 @@
+# @package _global_
+#
+# Last transformer block + pooler term (root ``config.yaml`` / ``_distill_hf_native`` already enables
+# ``distill_pooling_output`` / ``strip_aloe_register_prefix``).
+#
+model:
+  cfg:
+    distillation_layers: [-1]

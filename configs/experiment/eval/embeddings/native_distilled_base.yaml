@@ -1,0 +1,10 @@
+# @package _global_
+# Shared base for embeddings eval of native ALOE students loaded from explicit
+# local-checkpoint backbone configs.
+
+defaults:
+  - /experiment/eval/embeddings/native_base
+
+data:
+  transform:
+    is_bcos: true

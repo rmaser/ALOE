@@ -1,0 +1,16 @@
+# @package _global_
+#
+# Native Hub base student (no extra registers) + SigLIP2 teacher, cosine loss,
+# three hidden layers + pooler, 30k steps; student MLP uses ``hidden_act: identity``
+# (only B-cos linear, B=2).
+#
+#   pixi run python scripts/train.py experiment=native_siglip2/only_identity
+#
+defaults:
+  - /task/native_hub_distill_train
+  - /task/native_hub_distill_hidden_layers
+  - override /model/backbone@backbone.student: siglip2/aloe_siglip2_base_identity_mlp_hub
+  - override /model/backbone@backbone.teacher: siglip2/siglip2_base
+  - override /loss: cosine
+
+tags: ["native_siglip2", "distill-three-layer-cosine", "identity-mlp"]

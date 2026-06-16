@@ -1,0 +1,14 @@
+# @package _global_
+#
+# Last hidden state (index -1) + pooler, cosine. Student ``rmaser/aloe-siglip2-base`` (0 registers).
+#
+#   pixi run python scripts/train.py experiment=native_siglip2/align_last_cosine
+#
+defaults:
+  - /task/native_hub_distill_train
+  - /task/native_hub_align_last
+  - override /model/backbone@backbone.student: siglip2/aloe_siglip2_base_hub
+  - override /model/backbone@backbone.teacher: siglip2/siglip2_base
+  - override /loss: cosine
+
+tags: ["native_siglip2", "align-last-cosine"]

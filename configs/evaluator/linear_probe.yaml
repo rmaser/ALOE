@@ -1,0 +1,32 @@
+_target_: src.eval.linear_probe.LinearProbeEvaluator
+_recursive_: false
+batch_size: 8192
+lr: [0.01, 0.003, 0.001]
+weight_decay: 1e-4
+b_classifier: 2.0
+bcos_impl: v2
+use_bcos_head: true
+force_recompute: False
+feature_device: cuda
+
+loss_fn:
+  _target_: torch.nn.CrossEntropyLoss
+
+trainer_config:
+  _target_: lightning.pytorch.Trainer
+  max_epochs: 50
+  accelerator: auto
+  devices: 1
+  enable_progress_bar: True
+  enable_checkpointing: True
+
+callbacks_config:
+  checkpoint:
+    _target_: lightning.pytorch.callbacks.ModelCheckpoint
+    monitor: val_acc
+    mode: max
+    save_top_k: 1
+    filename: "best"
+  lr_monitor:
+    _target_: lightning.pytorch.callbacks.LearningRateMonitor
+    logging_interval: step

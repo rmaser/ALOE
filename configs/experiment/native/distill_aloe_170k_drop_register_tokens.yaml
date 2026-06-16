@@ -1,0 +1,9 @@
+# @package _global_
+#
+# Same as ``native/distill_aloe_170k`` but drop teacher/student register
+# tokens before hidden-state matching. Intended for DINOv3-style distillation
+# when register tokens should be ignored while all other settings stay equivalent.
+#
+defaults:
+  - /experiment/native/distill_aloe_170k
+  - /task/native_hub_drop_register_tokens

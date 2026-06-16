@@ -1,0 +1,12 @@
+_target_: src.models.config.HFDinov3Config
+name: "facebook/dinov3-vits16-pretrain-lvd1689m"
+type: "dinov3"
+feature_dim: 384
+layers: 12
+patch_size: 16
+register_tokens: 4
+cls_token: true
+model_part: "vision"
+num_labels: 1000
+use_bcos_head: false
+linear_probe_checkpoint: "${oc.env:CACHE_PATH}/aloe-align-once-to-explain/176zbh64/checkpoints/best_lr=0.01.ckpt"

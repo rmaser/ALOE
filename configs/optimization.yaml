@@ -1,0 +1,6 @@
+# @package _global_
+optimization:
+  lr: 0.001
+  optimizer:
+    _target_: torch.optim.AdamW
+    lr: ${optimization.lr}

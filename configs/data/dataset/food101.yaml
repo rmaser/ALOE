@@ -1,0 +1,5 @@
+# @package data.dataset
+_target_: src.data.datasets.config.DatasetConfig
+dataset_source: "hf"
+dataset_name: "ethz/food101"
+num_classes: 101

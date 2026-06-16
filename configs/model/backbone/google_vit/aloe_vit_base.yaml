@@ -1,0 +1,11 @@
+defaults:
+  - /model/backbone/google_vit/google_vit_base@_here_
+  - _self_
+
+# Native ALOE ViT **base** (B-cos): Hub id for architecture only — **no** Hub or local checkpoint weights.
+_target_: src.models.config.GoogleVitConfig
+name: "rmaser/aloe-vit-base"
+is_bcos: true
+trust_remote_code: false
+aloe_bcos_impl: v2
+load_pretrained_weights: false

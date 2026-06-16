@@ -1,0 +1,12 @@
+_target_: src.models.config.Siglip2Config
+name: "google/siglip2-so400m-patch14-384" # Example
+type: "siglip2"
+feature_dim: 1152
+layers: 27
+patch_size: 16
+register_tokens: 0
+cls_token: false
+model_part: "vision"
+override_resolution: 432
+use_gradient_checkpointing: true
+interpolate_teacher_image_size: 384

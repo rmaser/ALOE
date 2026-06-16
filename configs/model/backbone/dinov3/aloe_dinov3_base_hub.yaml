@@ -1,0 +1,7 @@
+defaults:
+  - /model/backbone/dinov3/aloe_dinov3_base@_here_
+  - _self_
+
+# Same as ``dinov3/aloe_dinov3_base`` but load pretrained weights from Hugging Face Hub.
+_target_: src.models.config.HFDinov3Config
+load_pretrained_weights: true

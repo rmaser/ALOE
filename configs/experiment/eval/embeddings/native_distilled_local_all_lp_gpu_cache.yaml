@@ -1,0 +1,35 @@
+# @package _global_
+# Evaluate all available native ALOE students from explicit local-checkpoint
+# backbone configs with KNN + the original LP protocol, while caching embeddings
+# on GPU for the LP stage.
+
+defaults:
+  - /experiment/eval/embeddings/native_distilled_local
+  - override /evaluator@evaluators.linear_probe: linear_probe_gpu_cache
+
+tags:
+  [
+    "eval",
+    "native",
+    "distilled",
+    "local_checkpoint",
+    "all_local",
+    "linear_probe",
+    "gpu_cache",
+  ]
+
+logger:
+  name: ${hydra_runtime_choice:model/backbone@backbone.student,unknown}__lp_gpu_cache
+
+data:
+  batch_size: 512
+  datamodule_config:
+    dataloader_config:
+      num_workers: 16
+
+hydra:
+  mode: MULTIRUN
+  sweeper:
+    params:
+      data/dataset: imagenet1k, fgvc_aircraft
+      model/backbone@backbone.student: google_vit/aloe_vit_base_local_weights #google_vit/aloe_vit_base_local_weights, siglip2/aloe_siglip2_base_local_weights,siglip2/aloe_siglip2_large_local_weights,siglip2/aloe_siglip2_so400m_local_weights,dinov3/aloe_dinov3_small_local_weights,dinov3/aloe_dinov3_base_local_weights,dinov3/aloe_dinov3_large_local_weights

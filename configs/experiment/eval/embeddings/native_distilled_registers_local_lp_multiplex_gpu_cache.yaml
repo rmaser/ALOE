@@ -1,0 +1,30 @@
+# @package _global_
+# Evaluate a native ALOE student loaded from an explicit local-checkpoint
+# backbone config using multiplexed linear probes plus GPU-resident cached
+# embeddings.
+
+defaults:
+  - /experiment/eval/embeddings/native_distilled_local
+  - override /evaluator@evaluators.linear_probe: linear_probe_multiplex_gpu_cache
+  - override model/backbone@backbone.student: aloe_siglip2_base_registers_local_weights
+
+tags:
+  [
+    "eval",
+    "native",
+    "distilled",
+    "local_checkpoint",
+    "linear_probe",
+    "multiplex",
+    "gpu_cache",
+  ]
+
+logger:
+  name: ${hydra_runtime_choice:model/backbone@backbone.student,unknown}__lp_multiplex_gpu_cache
+
+data:
+  batch_size: 512
+  datamodule_config:
+    dataloader_config:
+      # Cluster constraint: 12 CPU cores available per GPU.
+      num_workers: 12

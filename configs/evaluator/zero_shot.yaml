@@ -1,0 +1,5 @@
+_target_: src.eval.zero_shot_eval.ZeroShotEvaluator
+hf_model_reference: ${model_factory.target_model_config.name}
+logit_scale: 100.0
+topk: [1, 5, 10]
+force_recompute: False

@@ -1,0 +1,7 @@
+defaults:
+  - /model/backbone/siglip2/aloe_siglip2_base@_here_
+  - _self_
+
+# SigLIP2 base with MLP ``hidden_act: identity`` (ablation).
+_target_: src.models.config.Siglip2Config
+hidden_act: "identity"

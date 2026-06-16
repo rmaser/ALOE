@@ -1,0 +1,15 @@
+# @package _global_
+#
+# 432px-only host-RAM relief fragment for native Hub distillation runs.
+# Keep this narrowly scoped to the SO400M 432px launcher: lower worker count and
+# disable pinned/persistent worker amplification so startup RAM stays bounded.
+#
+# Compose this after a native-Hub distillation experiment wrapper.
+
+data:
+  datamodule_config:
+    dataloader_config:
+      num_workers: 2
+      persistent_workers: false
+      pin_memory: false
+      prefetch_factor: 1

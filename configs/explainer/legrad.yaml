@@ -1,0 +1,2 @@
+_target_: src.explanation.legrad_explainer.LeGradExplainer
+starting_layer: 0

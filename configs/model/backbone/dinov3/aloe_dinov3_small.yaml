@@ -1,0 +1,11 @@
+defaults:
+  - /model/backbone/dinov3/dinov3_small@_here_
+  - _self_
+
+# Native ALOE DINOv3 **small** (B-cos): Hub id for architecture only — **no** Hub or local checkpoint weights.
+_target_: src.models.config.HFDinov3Config
+name: "rmaser/aloe-dinov3-small"
+is_bcos: true
+trust_remote_code: false
+aloe_bcos_impl: v2
+load_pretrained_weights: false

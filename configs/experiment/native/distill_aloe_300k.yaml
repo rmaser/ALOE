@@ -1,0 +1,22 @@
+# @package _global_
+#
+# Native Hub ALOE student × SigLIP2 teacher, **300k steps** + ``aloe_scheduler_300k``.
+# Keeps the 5k warmup / 30k cosine tail convention from the 170k preset and
+# stretches the constant plateau for longer convergence runs.
+#
+#   CACHE_PATH=/path/to/cache pixi run python scripts/train.py experiment=native/distill_aloe_300k
+#
+defaults:
+  - /task/native_hub_distill_converged_300k
+  - override /data: default
+  - override /scheduler: aloe_scheduler_300k
+  - override /loss: cosine
+  - override /model/backbone@backbone.student: siglip2/aloe_siglip2_base_hub
+  - override /model/backbone@backbone.teacher: siglip2/siglip2_base
+
+tags: ["native", "distill-aloe", "300k"]
+
+# Must live on the experiment (not only in a task) so Hydra merge does not drop it.
+model:
+  cfg:
+    distillation_layers: ${select_distillation_layers:${backbone.student.layers}}

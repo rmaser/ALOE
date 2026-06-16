@@ -1,0 +1,27 @@
+# @package _global_
+
+# Embeddings-based evaluation (linear probe, knn, zero_shot)
+# Run with: pixi run python scripts/eval.py experiment=eval/embeddings
+
+defaults:
+  - /evaluator@evaluators.grid_pg: grid_pg
+  - /evaluator@evaluators.pixel_deletion: pixel_deletion
+  - /explainer: attnlrp
+
+evaluators:
+  grid_pg:
+    explainer: ${explainer}
+    max_batches: 512
+  pixel_deletion:
+    explainer: ${explainer}
+
+eval_list:
+  - grid_pg
+  # - pixel_deletion
+
+tags: ["eval", "embeddings"]
+
+data:
+  batch_size: 16
+  transform:
+    force_val_transforms_in_train: true

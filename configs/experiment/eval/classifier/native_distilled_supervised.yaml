@@ -1,0 +1,24 @@
+# @package _global_
+#
+# Classifier eval (grid-pg / pixel deletion) for native distilled ALOE students.
+# Uses the supervised LP configs that expose class-level `explain()`.
+#
+# Usage:
+#
+#   pixi run python scripts/eval.py \
+#       experiment=eval/classifier/native_distilled_supervised
+
+defaults:
+  - /experiment/eval/classifier/native_bce_base
+  - /model/supervised@backbone.student: dinov3/aloe_dinov3_base_imagenet1k_lp
+  - override /explainer: bcos
+
+tags:
+  ["eval", "native", "distilled", "local_checkpoint", "classifier", "grid_pg", "supervised_lp"]
+
+hydra:
+  mode: MULTIRUN
+  sweeper:
+    params:
+      data/dataset: imagenet1k
+      model/supervised@backbone.student: dinov3/aloe_dinov3_large_imagenet1k_lp #siglip2/aloe_siglip2_base_imagenet1k_lp, siglip2/aloe_siglip2_large_imagenet1k_lp, siglip2/aloe_siglip2_so400m_imagenet1k_lp, dinov3/aloe_dinov3_small_imagenet1k_lp, dinov3/aloe_dinov3_base_imagenet1k_lp, dinov3/aloe_dinov3_large_imagenet1k_lp, google_vit/aloe_vit_base_imagenet1k_lp

@@ -1,0 +1,8 @@
+defaults:
+  - /model/backbone/dinov3/aloe_dinov3_base@_here_
+  - _self_
+
+# Same as ``dinov3/aloe_dinov3_base`` but load the trunk from a local Lightning checkpoint (no Hub weights).
+_target_: src.models.config.HFDinov3Config
+load_pretrained_weights: false
+backbone_checkpoint: "${oc.env:CACHE_PATH}/aloe-align-once-to-explain/qsstausf/checkpoints/last.ckpt"

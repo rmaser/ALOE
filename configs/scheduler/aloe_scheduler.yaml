@@ -1,0 +1,5 @@
+# @package scheduler
+target: src.training.scheduler.create_warmup_constant_cosine_scheduler
+warmup_steps: 5000
+constant_steps: 135000 # Total linear phase is 140k = 5k warmup + 135k constant
+cosine_steps: 30000

@@ -1,0 +1,4 @@
+defaults:
+  - linear_probe_multiplex
+
+feature_device: cuda

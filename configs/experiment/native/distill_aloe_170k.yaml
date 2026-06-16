@@ -1,0 +1,29 @@
+# @package _global_
+#
+# Native Hub ALOE student × SigLIP2 teacher, **170k steps** + ``aloe_scheduler`` (warmup /
+# constant / cosine). Multi-block distill + pooler (same objective as ``native/distill_aloe``,
+# converged run).
+#
+# Default distillation loss for native Hub runs: ``objective/aloe_distill``, composed
+# via ``/experiment/native/_distill_hf_native`` (not repeated here).
+#
+#   CACHE_PATH=/path/to/cache pixi run python scripts/train.py experiment=native/distill_aloe_170k
+#
+defaults:
+  - /task/native_hub_distill_converged_170k
+  - override /data: default
+  - override /scheduler: aloe_scheduler
+  - override /loss: cosine
+  - override /model/backbone@backbone.student: siglip2/aloe_siglip2_base_hub
+  - override /model/backbone@backbone.teacher: siglip2/siglip2_base
+
+optimizer:
+  lr: 0.0003
+  weight_decay: 0.0
+
+tags: ["native", "distill-aloe", "170k"]
+
+# Must live on the experiment (not only in a task) so Hydra merge does not drop it.
+model:
+  cfg:
+    distillation_layers: ${select_distillation_layers:${backbone.student.layers}}

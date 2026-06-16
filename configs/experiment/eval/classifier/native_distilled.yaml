@@ -1,0 +1,31 @@
+# @package _global_
+#
+# Classifier eval (attribution / pixel-deletion / grid-pg) for native distilled
+# ALOE students loaded from explicit local-checkpoint backbone configs.
+#
+# Usage:
+#
+#   pixi run python scripts/eval.py #       experiment=eval/classifier/native_distilled #       model/backbone@backbone.student=siglip2/aloe_siglip2_base_local_weights
+#
+# Note: native students are not B-cos here; use `classifier_b: 1.0` and
+# CrossEntropyLoss.
+
+defaults:
+  - /experiment/eval/classifier/native_base
+  - /model/backbone@backbone.student: siglip2/aloe_siglip2_base_local_weights
+
+tags: ["eval", "native", "distilled", "local_checkpoint", "classifier"]
+
+evaluators:
+  linear_probe:
+    loss_fn:
+      _target_: torch.nn.CrossEntropyLoss
+      _partial_: true
+    b_classifier: 1.0
+
+hydra:
+  mode: MULTIRUN
+  sweeper:
+    params:
+      data/dataset: imagenet1k
+      model/backbone@backbone.student: siglip2/aloe_siglip2_base_local_weights

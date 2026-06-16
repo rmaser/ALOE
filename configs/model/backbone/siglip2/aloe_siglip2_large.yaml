@@ -1,0 +1,11 @@
+defaults:
+  - /model/backbone/siglip2/siglip2_large@_here_
+  - _self_
+
+# Native ALOE SigLIP2 **large** (B-cos): architecture only — **no** Hub or local checkpoint weights.
+_target_: src.models.config.Siglip2Config
+name: "rmaser/aloe-siglip2-large"
+is_bcos: true
+trust_remote_code: false
+aloe_bcos_impl: v2
+load_pretrained_weights: false

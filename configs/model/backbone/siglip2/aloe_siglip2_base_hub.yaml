@@ -1,0 +1,7 @@
+defaults:
+  - /model/backbone/siglip2/aloe_siglip2_base@_here_
+  - _self_
+
+# Load pretrained weights from Hugging Face Hub (same architecture as ``siglip2/aloe_siglip2_base``).
+_target_: src.models.config.Siglip2Config
+load_pretrained_weights: true

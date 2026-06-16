@@ -1,0 +1,34 @@
+# @package _global_
+# Viper-GPU: 4x AMD MI300A APUs across 2 full nodes (exclusive)
+# 96 CPU cores, 512 GB HBM3 total (4x128 GB)
+defaults:
+  - override /hydra/launcher: submitit_slurm
+
+hydra:
+  callbacks:
+    log_job_return:
+      _target_: hydra.experimental.callbacks.LogJobReturnCallback
+  launcher:
+    _target_: hydra_plugins.hydra_submitit_launcher.submitit_launcher.SlurmLauncher
+    timeout_min: 1440
+    cpus_per_task: 24
+    tasks_per_node: 2
+    gres: "gpu:2"
+    constraint: "apu"
+    mem_gb: null
+    mem_per_cpu: null
+    mem_per_gpu: null
+    additional_parameters:
+      mem: "220000"
+    nodes: 2
+    name: ${hydra.job.name}
+    signal_delay_s: 120
+    max_num_timeout: 3
+    array_parallelism: 256
+    setup:
+      - export SLURM_CPU_BIND=none
+      - cd ${oc.env:PIXI_PROJECT_ROOT,${oc.env:PWD}}
+      - eval "$(pixi shell-hook -e rocm)"
+
+trainer:
+  num_nodes: 2

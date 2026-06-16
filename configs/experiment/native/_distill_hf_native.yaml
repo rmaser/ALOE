@@ -1,0 +1,44 @@
+# @package _global_
+#
+# Shared **native ALOE distillation** wiring: ``DistillHFModel``, student/teacher factories,
+# objective, and default scheduler. Include from training experiments or ``config.yaml`` —
+# not a standalone ``experiment=`` entry point (name starts with ``_``).
+#
+# Replaces the former ``model/hf_distillation_native`` preset; distillation experiments own
+# this composition at the experiment layer.
+
+defaults:
+  - /objective/aloe_distill
+  - /scheduler: one_cycle
+  - /model/factory/native_hub_vision_student@student_factory
+  - /model/factory/native_hub_vision_teacher@teacher_factory
+
+trainer:
+  num_sanity_val_steps: 0
+
+student_factory:
+  target_model_config: ${backbone.student}
+  load_pretrained_weights: false
+  # Trunk sources come from ``backbone.student`` (see ``student_hf_vision_init_checkpoint`` resolver).
+  hf_vision_init_checkpoint: ${student_hf_vision_init_checkpoint:${backbone.student},${backbone.teacher.name}}
+  use_gradient_checkpointing: ${oc.select:backbone.student.use_gradient_checkpointing,false}
+
+teacher_factory:
+  target_model_config: ${backbone.teacher}
+  use_gradient_checkpointing: false
+
+model:
+  _target_: src.training.lightning_module.DistillHFModel
+  cfg:
+    _target_: src.training.config.LightningModuleConfig
+    optimizer_config: ${optimizer}
+    scheduler_config: ${scheduler}
+    loss_fn: ${loss}
+
+    student_model_factory_config: ${student_factory}
+    teacher_model_factory_config: ${teacher_factory}
+
+    distillation_layers: []
+    distill_pooling_output: true
+    strip_aloe_register_prefix: true
+    drop_register_tokens: false

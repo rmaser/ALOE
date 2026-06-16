@@ -1,0 +1,7 @@
+_target_: src.eval.grid_pg.GridPGEvaluator
+device: cuda
+explainer:
+  _target_: src.explanation.bcos.BcosExplainer
+max_batches: 4
+confidence_threshold: 0.95
+log_every_n_batches: 10

@@ -1,0 +1,10 @@
+# @package _global_
+logger:
+  _target_: pytorch_lightning.loggers.WandbLogger
+  project: "aloe-align-once-to-explain"
+  name: ${backbone.student.name} # Can be set via command line
+  group: ${hydra:runtime.choices.experiment} # Can be set via command line
+  save_dir: "${oc.env:CACHE_PATH}"
+  offline: false
+  id: null # Pass id to resume run
+  log_model: false

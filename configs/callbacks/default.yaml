@@ -1,0 +1,33 @@
+model_checkpoint:
+  _target_: pytorch_lightning.callbacks.ModelCheckpoint
+  monitor: "loss_pooler/val_pooler" # name of the logged metric which determines when model is improving
+  mode: "min" # "max" means higher metric value is better, can be also "min"
+  save_top_k: 1 # save k best models (determined by above metric)
+  save_last: True # additionaly always save model from last epoch
+  verbose: False
+  filename: "best_{step}"
+  auto_insert_metric_name: False
+
+timer:
+  _target_: src.training.callbacks.timer.TimerCallback
+
+step_timer:
+  _target_: src.training.callbacks.timer.StepTimerCallback
+
+periodic_checkpoint:
+  _target_: pytorch_lightning.callbacks.ModelCheckpoint
+  every_n_train_steps: 20000 # Save every 10000 steps
+  save_top_k: -1 # Save all checkpoints
+  save_last: False
+  filename: "periodic_step_{step}"
+  auto_insert_metric_name: False
+
+# record_gradients:
+#   _target_: src.training.callbacks.gradients.RecordGradients
+
+# record_weights:
+#   _target_: src.training.callbacks.weights.RecordWeights
+
+lr_monitor:
+  _target_: pytorch_lightning.callbacks.LearningRateMonitor
+  logging_interval: step

@@ -1,0 +1,10 @@
+_target_: src.models.config.HFDinov3Config
+name: "facebook/dinov3-vitb16-pretrain-lvd1689m"
+type: "dinov3"
+feature_dim: 768
+layers: 12
+patch_size: 16
+register_tokens: 4
+cls_token: true
+model_part: "vision"
+# override_resolution: 448

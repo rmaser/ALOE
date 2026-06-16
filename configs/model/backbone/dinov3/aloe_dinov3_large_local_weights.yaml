@@ -1,0 +1,7 @@
+defaults:
+  - /model/backbone/dinov3/aloe_dinov3_large@_here_
+  - _self_
+
+_target_: src.models.config.HFDinov3Config
+load_pretrained_weights: false
+backbone_checkpoint: "${oc.env:CACHE_PATH}/aloe-align-once-to-explain/mon1qlfx/checkpoints/last.ckpt"

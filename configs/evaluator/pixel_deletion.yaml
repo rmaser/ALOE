@@ -1,0 +1,15 @@
+_target_: src.eval.pixel_deletion.PixelDeletionEvaluator
+deletion_percentages: [0.0, 0.01, 0.02, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.6, 0.8]
+explainer:
+  _target_: src.explanation.bcos.BcosExplainer
+save_path: ${oc.env:CACHE_PATH}/evaluator/pixel_deletion/${backbone.student.name}/${explainer._target_}/results.pt
+max_batches: 8
+mode: topk # topk, abs_topk, positive_only
+largest: true
+correct_only: false
+confidence_threshold: null
+smoothing_sigma: 0.0
+# deletion_unit: pixel  -> fraction of pixels removed (original behavior)
+# deletion_unit: block -> fraction of non-overlapping block_size×block_size patches removed (fair across coarse/fine maps)
+deletion_unit: block
+block_size: 16

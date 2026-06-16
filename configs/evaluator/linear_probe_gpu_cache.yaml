@@ -1,0 +1,7 @@
+defaults:
+  - linear_probe
+
+# Keep the canonical linear-probe training protocol but move cached feature
+# tensors to GPU before LP training to avoid per-batch H2D copies on small
+# datasets.
+feature_device: cuda

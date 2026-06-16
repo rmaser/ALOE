@@ -1,0 +1,11 @@
+# Native ALOE SigLIP2 **base** (B-cos) + ImageNet-1k linear-probe checkpoints.
+#
+# Inherits ``/model/backbone/siglip2/aloe_siglip2_base_local_weights``; override LP path as needed.
+
+defaults:
+  - /model/backbone/siglip2/aloe_siglip2_base_local_weights@_here_
+  - _self_
+
+num_labels: 1000
+aloe_use_logit_layer: true
+linear_probe_checkpoint: "${oc.env:CACHE_PATH}/aloe-align-once-to-explain/vdlso5l2/checkpoints/best_lr=0.01.ckpt"

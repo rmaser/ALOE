@@ -1,0 +1,16 @@
+# @package _global_
+# Attribution / classifier eval for native ALOE students with explicit distilled
+# local-checkpoint backbone configs.
+
+defaults:
+  - /experiment/eval/classifier/native_bce_base
+  - /model/backbone@backbone.student: siglip2/aloe_siglip2_base_local_weights
+
+tags: ["eval", "native_hf", "classifier", "distilled_ckpt"]
+
+hydra:
+  mode: MULTIRUN
+  sweeper:
+    params:
+      data/dataset: imagenet1k
+      model/backbone@backbone.student: siglip2/aloe_siglip2_base_local_weights,siglip2/aloe_siglip2_large_local_weights

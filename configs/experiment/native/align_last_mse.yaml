@@ -1,0 +1,23 @@
+# @package _global_
+#
+# Last hidden state (index -1) + pooler, MSE. Student ``rmaser/aloe-siglip2-base`` (0 registers).
+#
+#   pixi run python scripts/train.py experiment=native/align_last_mse
+#
+# MSE is set on ``model.cfg`` so we avoid ``override /loss`` here (that override
+# only matches if ``loss`` appears in *this* experiment's defaults list; anchoring
+# would duplicate the ``loss`` group once tasks/experiments merge with root
+# ``config.yaml`` distill wiring).
+#
+defaults:
+  - /task/native_hub_distill_train
+  - /task/native_hub_align_last
+  - override /model/backbone@backbone.student: siglip2/aloe_siglip2_base_hub
+  - override /model/backbone@backbone.teacher: siglip2/siglip2_base
+
+model:
+  cfg:
+    loss_fn:
+      _target_: src.training.loss.MSELoss
+
+tags: ["native_siglip2", "align-last-mse"]

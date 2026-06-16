@@ -1,0 +1,10 @@
+# Extends `native_hub_vision_student` for eval-style instantiation.
+#
+# The selected backbone or supervised config now owns the loading recipe directly
+# (Hub weights, HF init, or local checkpoints).
+
+defaults:
+  - native_hub_vision_student
+
+compile: true
+use_gradient_checkpointing: false

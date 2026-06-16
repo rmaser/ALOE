@@ -1,0 +1,13 @@
+# @package _global_
+#
+# Default stack for native Hub ALOE × SigLIP2 distillation (30k steps, one_cycle).
+# Root ``config.yaml`` includes ``/experiment/native/_distill_hf_native`` (objective + factories + ``DistillHFModel``).
+# Experiments add backbones and ``/task/native_hub_align_last`` or
+# ``/task/native_hub_distill_hidden_layers``. For MSE, set ``model.cfg.loss_fn``
+# in the experiment (``override /loss`` may not match this node’s defaults list; see
+# ``configs/task/README.md``).
+#
+defaults:
+  - /task/native_hub_distill_short_run
+  - override /data: default
+  - override /scheduler: one_cycle

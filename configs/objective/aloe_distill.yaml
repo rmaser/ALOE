@@ -1,0 +1,12 @@
+# @package _global_
+#
+# **aloe_distill** — default loss for ALOE Hub vision distillation
+# (``DistillHFModel``). Composed from ``/experiment/native/_distill_hf_native`` (via root
+# ``config.yaml``) before factory defaults so experiments can still ``override /loss``
+# after (when that group appears in the experiment defaults list).
+#
+# Optimizer and scheduler are overridden by **task** / experiment (e.g. ``native_hub_distill_short_run`` LR,
+# ``aloe_scheduler`` for 170k runs).
+#
+defaults:
+  - /loss: cosine

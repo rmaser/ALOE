@@ -1,0 +1,2 @@
+# @package loss
+_target_: src.training.loss.SiglipLoss

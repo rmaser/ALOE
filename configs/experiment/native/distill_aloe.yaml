@@ -1,0 +1,17 @@
+# @package _global_
+#
+# Native ALOE student (Hub), SigLIP2 teacher, cosine loss.
+# Three hidden layers via ``select_distillation_layers`` + pooler term. 30k steps.
+#
+#   pixi run python scripts/train.py experiment=native/distill_aloe
+#
+# For the **170k** converged schedule use ``experiment=native/distill_aloe_170k``.
+#
+defaults:
+  - /task/distill_converged_170k
+  - /task/native_hub_distill_hidden_layers
+  - override /model/backbone@backbone.student: siglip2/aloe_siglip2_base_hub
+  - override /model/backbone@backbone.teacher: siglip2/siglip2_base
+  - override /loss: cosine
+
+tags: ["native_siglip2", "distill-aloe"]

@@ -1,0 +1,13 @@
+# @package _global_
+# Evaluate all published native ALOE Hub backbones with KNN + the aggressive LP protocol.
+
+defaults:
+  - /experiment/eval/embeddings/native_hf
+
+tags: ["eval", "native_hf", "all_hub", "knn", "linear_probe"]
+
+hydra:
+  mode: MULTIRUN
+  sweeper:
+    params:
+      model/backbone@backbone.student: siglip2/aloe_siglip2_base_hub,siglip2/aloe_siglip2_large_hub,siglip2/aloe_siglip2_so400m_hub,siglip2/aloe_siglip2_so400m_432_hub,dinov3/aloe_dinov3_small_hub,dinov3/aloe_dinov3_base_hub,dinov3/aloe_dinov3_large_hub,google_vit/aloe_vit_base_hub

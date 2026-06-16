@@ -1,0 +1,4 @@
+_target_: src.eval.knn.KNNEvaluator
+k: 20
+batch_size: 256
+force_recompute: False

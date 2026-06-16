@@ -1,0 +1,11 @@
+defaults:
+  - /model/backbone/google_vit/aloe_vit_base@_here_
+  - _self_
+
+# Local-checkpoint loading pattern for the canonical native ALOE ViT base backbone.
+_target_: src.models.config.GoogleVitConfig
+load_pretrained_weights: false
+load_weights_from_local_checkpoints:
+  - path: "${oc.env:CACHE_PATH}/aloe-align-once-to-explain/cfyxbprw/checkpoints/last.ckpt"
+    patterns: [".*"]
+    ignore_patterns: [".*classifier.*"]

@@ -1,0 +1,9 @@
+# @package _global_
+#
+# Drop register tokens from both teacher and student hidden states before matching.
+# Useful for DINOv3 distillation when you want to ignore register-token alignment
+# while keeping the rest of the native Hub distillation stack unchanged.
+#
+model:
+  cfg:
+    drop_register_tokens: true

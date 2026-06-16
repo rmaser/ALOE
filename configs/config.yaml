@@ -1,0 +1,21 @@
+defaults:
+  - trainer: default
+  - /experiment/native/_distill_hf_native
+  - optimizer: adamw
+  - model/backbone@backbone.student: siglip2/siglip2_base
+  - model/backbone@backbone.teacher: siglip2/siglip2_base
+  - logger: wandb
+  - _self_
+  - callbacks: default
+  - data: default
+  - experiment: null
+
+seed: 42
+resume_slurm: false
+
+hydra:
+  run:
+    dir: ${oc.env:CACHE_PATH}/hydra_outputs/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  sweep:
+    dir: ${oc.env:CACHE_PATH}/hydra_multirun/${now:%Y-%m-%d}/${now:%H-%M-%S}
+    subdir: ${hydra.job.num}

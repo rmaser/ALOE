@@ -1,0 +1,7 @@
+# @package data.transform
+_target_: src.data.transforms.config.TransformConfig
+model_source: "hf"
+model_name: ${backbone.student.name}
+override_resolution: ${oc.select:backbone.student.override_resolution,null}
+is_bcos: "${oc.select:factory_config.is_bcos,${oc.select:model_factory.is_bcos,${oc.select:student_factory.is_bcos,${oc.select:model.cfg.student_model_factory_config.is_bcos,false}}}}"
+image_processor_trust_remote_code: false
