@@ -201,6 +201,35 @@ model = AutoModelForImageClassification.from_pretrained(
 model.eval()
 ```
 
+### Minimal Class Explanations
+
+Classifier checkpoints expose model-inherent explanations directly through `model.explain(...)`:
+
+```python
+from PIL import Image
+from transformers import AutoImageProcessor, AutoModelForImageClassification
+
+repo_id = "rmaser/aloe-dinov3-base-in1k-lp"
+processor = AutoImageProcessor.from_pretrained(repo_id, trust_remote_code=True)
+model = AutoModelForImageClassification.from_pretrained(
+    repo_id,
+    trust_remote_code=True,
+)
+model.eval()
+
+image = Image.open("image.jpg").convert("RGB")
+pixel_values = processor(images=image, return_tensors="pt").pixel_values
+
+result = model.explain(pixel_values, idx=None)
+class_idx = int(result["explained_class_idx"][0])
+print(f"Predicted ImageNet-1k class index: {class_idx}")
+
+rgba = (result["explanation"][0] * 255).astype("uint8")
+Image.fromarray(rgba).save("explanation.png")
+```
+
+`idx=None` explains the predicted class. Pass an ImageNet-1k class index to `idx` to explain a specific class instead.
+
 For code that needs this repository's Hydra/model-factory path, use `aloe_model_loader.py`. It is intentionally thin and delegates to `src.models.model_loader`.
 
 ## Repository Layout
