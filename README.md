@@ -4,7 +4,17 @@ This is the public code repository for **ALOE** (**AL**ign **O**nce to **E**xpla
 
 ALOE converts strong ViT-style foundation models into inherently interpretable B-cos visual backbones through one-time, label-free feature alignment. The aligned backbone can then be used as a drop-in encoder for downstream evaluation while producing model-inherent B-cos explanations.
 
-**Links:** [ALOE models](https://huggingface.co/collections/rmaser/aloe-69b285dfeee175d442f28232) · [ALOEv2 models](https://huggingface.co/collections/rmaser/aloev2-6a5ca2fceb4485f945461a5c) · [Paper (CVPR 2026)](https://openaccess.thecvf.com/content/CVPR2026/html/Maser_Align_Once_to_Explain_Feature_Alignment_for_Scalable_B-cosification_of_CVPR_2026_paper.html)
+[![CVPR 2026](https://img.shields.io/badge/CVPR-2026-2F6BFF.svg)](https://openaccess.thecvf.com/content/CVPR2026/html/Maser_Align_Once_to_Explain_Feature_Alignment_for_Scalable_B-cosification_of_CVPR_2026_paper.html)
+[![Project page](https://img.shields.io/badge/Project-Page-8A2BE2.svg)](https://rmaser.github.io/aloe_project/)
+[![ALOE on Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97_Hugging_Face-ALOE-FFD21E.svg)](https://huggingface.co/collections/rmaser/aloe-69b285dfeee175d442f28232)
+[![ALOEv2 on Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97_Hugging_Face-ALOEv2-FFD21E.svg)](https://huggingface.co/collections/rmaser/aloev2-6a5ca2fceb4485f945461a5c)
+[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC_BY--NC--SA_4.0-lightgrey.svg)](LICENSE)
+
+<p align="center">
+  <img src="docs/figures/aloe_setup.png" alt="ALOE transforms a foundation ViT to B-cos, aligns it once against the frozen teacher on unlabeled images, and deploys the frozen B-cos backbone with inherent explanations." width="100%">
+</p>
+
+**Transform to B-cos** — convert a foundation ViT encoder into a bias-free, dynamic-linear backbone. **Align once** — perform label-free feature alignment against the frozen teacher on unlabeled images. **Deploy** — freeze the aligned backbone for downstream transfer; explanations follow directly from the model's dynamic-linear summary.
 
 ## Highlights
 
@@ -17,6 +27,10 @@ ALOE converts strong ViT-style foundation models into inherently interpretable B
 ## Main Results
 
 All values below are from the paper and are reported on ImageNet-1k. Linear probe and k-NN measure recognition quality. GridPG measures localization quality; teacher GridPG uses the strongest reported teacher-side post-hoc baseline in the table, AttnLRP, while ALOE uses model-inherent B-cos attributions.
+
+<p align="center">
+  <img src="docs/figures/interpretability_vs_accuracy.png" alt="Interpretability versus accuracy for ViT-B/16 backbones: ALOE substantially improves GridPG localization while retaining ImageNet accuracy." width="62%">
+</p>
 
 | Model family | Architecture | Teacher LP | ALOE LP | Teacher k-NN | ALOE k-NN | Teacher GridPG | ALOE GridPG |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -31,9 +45,53 @@ All values below are from the paper and are reported on ImageNet-1k. Linear prob
 
 Across 10-dataset ViT-B/16 frozen-feature linear evaluation, ALOE improves over vanilla B-cosification by +13.24 points for supervised ViT, +7.62 points for SigLIP2, and +15.82 points for DINOv3 while staying close to the original teacher models.
 
+### Performance Across Model Scale
+
+<p align="center">
+  <img src="docs/figures/in1k_lp_by_scale.png" alt="ImageNet-1k linear-probe accuracy across SigLIP2 and DINOv3 scales: ALOE closely tracks each foundation-model teacher." width="100%">
+</p>
+
+<p align="center">
+  <img src="docs/figures/gridpg_by_scale.png" alt="GridPG localization across SigLIP2 and DINOv3 scales: ALOE's inherent B-cos attributions outperform the teacher-side post-hoc explainers." width="100%">
+</p>
+
+### Explanations and Feature Geometry
+
+<p align="center">
+  <img src="docs/figures/explanations_and_pca.png" alt="Input images, inherent B-cos attributions, and PCA visualizations of the final image representation for an ALOE-aligned DINOv3 model." width="100%">
+</p>
+
+The model-inherent attributions are object-centric and class-specific. The PCA visualizations show that alignment preserves the teacher's spatially structured feature geometry while making its evidence directly inspectable.
+
+### Zero-Shot Explanations
+
+<p align="center">
+  <img src="docs/figures/zero_shot_explanations.png" alt="Zero-shot explanations from an ALOE-aligned SigLIP2 model, with input images above and model-inherent B-cos attributions for matching text prompts below." width="100%">
+</p>
+
+SigLIP2-aligned ALOE encoders retain vision-language transfer and expose model-inherent explanations for image-text similarity.
+
 ### ALOEv2
 
 ALOEv2 is the multi-resolution DINOv3 follow-up. It fine-tunes the ALOE DINOv3 models with per-step 224/384/480-pixel sampling and corrects the selected distillation depths to include the final transformer block. This removes the train/evaluation resolution mismatch that hurt the original models on dense prediction while preserving classification quality and inherent B-cos explanations.
+
+<p align="center">
+  <img src="docs/figures/aloev2_dense_prediction.png" alt="Dense-prediction performance across DINOv3 model sizes: ALOEv2 closes most of the gap to the teacher on correspondence, keypoint matching, and surface normals." width="90%">
+</p>
+
+<p align="center">
+  <img src="docs/figures/aloev2_depth.png" alt="NYUv2 monocular-depth probing across model sizes: ALOEv2 recovers most of the teacher's depth quality." width="70%">
+</p>
+
+Multi-resolution alignment restores dense-feature quality close to the DINOv3 teacher across correspondence, surface normals, and monocular depth.
+
+<p align="center">
+  <img src="docs/figures/aloev2_knn_lp.png" alt="ImageNet-1k k-NN and linear-probe accuracy across model sizes: ALOEv2 remains close to DINOv3 and ALOE." width="90%">
+</p>
+
+<p align="center">
+  <img src="docs/figures/aloev2_gridpg.png" alt="GridPG localization across model sizes: ALOEv2 retains strong inherent B-cos localization." width="70%">
+</p>
 
 ## Published Models
 
