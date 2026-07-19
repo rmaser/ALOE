@@ -69,7 +69,53 @@ The model-inherent attributions are object-centric and class-specific. The PCA v
   <img src="docs/figures/zero_shot_explanations.png" alt="Zero-shot explanations from an ALOE-aligned SigLIP2 model, with input images above and model-inherent B-cos attributions for matching text prompts below." width="100%">
 </p>
 
-SigLIP2-aligned ALOE encoders retain vision-language transfer and expose model-inherent explanations for image-text similarity.
+ALOE publishes vision encoders only. Pair a SigLIP2-family checkpoint with the original SigLIP2 text encoder named in its config, then pass normalized text features to `explain_language_features` to explain image-text cosine similarity:
+
+```python
+import torch
+import torch.nn.functional as F
+from PIL import Image
+from transformers import AutoImageProcessor, AutoModel, AutoTokenizer, Siglip2TextModel
+
+repo_id = "rmaser/aloe-siglip2-base"
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+processor = AutoImageProcessor.from_pretrained(repo_id, trust_remote_code=True)
+image_model = AutoModel.from_pretrained(repo_id, trust_remote_code=True).to(device)
+image_model.eval()
+
+text_model_id = image_model.config.aloe_base_model_name
+tokenizer = AutoTokenizer.from_pretrained(text_model_id)
+text_model = Siglip2TextModel.from_pretrained(text_model_id).to(device)
+text_model.eval()
+
+labels = ["a person eating spaghetti", "a person playing guitar", "a person running"]
+prompts = [f"This is a photo of {label}.".lower() for label in labels]
+tokens = tokenizer(
+    prompts,
+    padding="max_length",
+    truncation=True,
+    max_length=64,
+    return_tensors="pt",
+).to(device)
+
+with torch.inference_mode():
+    text_features = F.normalize(text_model(**tokens).pooler_output, dim=-1)
+
+image = Image.open("image.jpg").convert("RGB")
+pixel_values = processor(images=image, return_tensors="pt").pixel_values.to(device)
+
+explanation = image_model.explain_language_features(
+    pixel_values,
+    text_features,
+    idx=None,
+)
+# explanation["explanation"]         — RGBA attribution overlay, (H, W, 4)
+# explanation["contribution_map"]    — input×gradient map, (1, 1, H, W)
+# explanation["explained_class_idx"] — index into labels
+```
+
+`idx=None` explains the highest-scoring label; pass a label index to explain a specific prompt. Explanation calls currently expect one input image at a time.
 
 ### ALOEv2
 
