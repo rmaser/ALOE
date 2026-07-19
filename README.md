@@ -99,7 +99,7 @@ tokens = tokenizer(
     return_tensors="pt",
 ).to(device)
 
-with torch.inference_mode():
+with torch.no_grad():
     text_features = F.normalize(text_model(**tokens).pooler_output, dim=-1)
 
 image = Image.open("image.jpg").convert("RGB")
@@ -110,7 +110,7 @@ explanation = image_model.explain_language_features(
     text_features,
     idx=None,
 )
-# explanation["explanation"]         — RGBA attribution overlay, (H, W, 4)
+# explanation["explanation"]         — RGBA attribution overlay, (1, H, W, 4)
 # explanation["contribution_map"]    — input×gradient map, (1, 1, H, W)
 # explanation["explained_class_idx"] — index into labels
 ```
