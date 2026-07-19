@@ -63,60 +63,6 @@ Across 10-dataset ViT-B/16 frozen-feature linear evaluation, ALOE improves over 
 
 The model-inherent attributions are object-centric and class-specific. The PCA visualizations show that alignment preserves the teacher's spatially structured feature geometry while making its evidence directly inspectable.
 
-### Zero-Shot Explanations
-
-<p align="center">
-  <img src="docs/figures/zero_shot_explanations.png" alt="Zero-shot explanations from an ALOE-aligned SigLIP2 model, with input images above and model-inherent B-cos attributions for matching text prompts below." width="100%">
-</p>
-
-ALOE publishes vision encoders only. Pair a SigLIP2-family checkpoint with the original SigLIP2 text encoder named in its config, then pass normalized text features to `explain_language_features` to explain image-text cosine similarity:
-
-```python
-import torch
-import torch.nn.functional as F
-from PIL import Image
-from transformers import AutoImageProcessor, AutoModel, AutoTokenizer, Siglip2TextModel
-
-repo_id = "rmaser/aloe-siglip2-base"
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-processor = AutoImageProcessor.from_pretrained(repo_id, trust_remote_code=True)
-image_model = AutoModel.from_pretrained(repo_id, trust_remote_code=True).to(device)
-image_model.eval()
-
-text_model_id = image_model.config.aloe_base_model_name
-tokenizer = AutoTokenizer.from_pretrained(text_model_id)
-text_model = Siglip2TextModel.from_pretrained(text_model_id).to(device)
-text_model.eval()
-
-labels = ["a person eating spaghetti", "a person playing guitar", "a person running"]
-prompts = [f"This is a photo of {label}.".lower() for label in labels]
-tokens = tokenizer(
-    prompts,
-    padding="max_length",
-    truncation=True,
-    max_length=64,
-    return_tensors="pt",
-).to(device)
-
-with torch.no_grad():
-    text_features = F.normalize(text_model(**tokens).pooler_output, dim=-1)
-
-image = Image.open("image.jpg").convert("RGB")
-pixel_values = processor(images=image, return_tensors="pt").pixel_values.to(device)
-
-explanation = image_model.explain_language_features(
-    pixel_values,
-    text_features,
-    idx=None,
-)
-# explanation["explanation"]         — RGBA attribution overlay, (1, H, W, 4)
-# explanation["contribution_map"]    — input×gradient map, (1, 1, H, W)
-# explanation["explained_class_idx"] — index into labels
-```
-
-`idx=None` explains the highest-scoring label; pass a label index to explain a specific prompt. Explanation calls currently expect one input image at a time.
-
 ### ALOEv2
 
 ALOEv2 is the multi-resolution DINOv3 follow-up. It fine-tunes the ALOE DINOv3 models with per-step 224/384/480-pixel sampling and corrects the selected distillation depths to include the final transformer block. This removes the train/evaluation resolution mismatch that hurt the original models on dense prediction while preserving classification quality and inherent B-cos explanations.
@@ -229,6 +175,60 @@ Image.fromarray(rgba).save("explanation.png")
 ```
 
 `idx=None` explains the predicted class. Pass an ImageNet-1k class index to `idx` to explain a specific class instead.
+
+### Zero-Shot Explanations
+
+<p align="center">
+  <img src="docs/figures/zero_shot_explanations.png" alt="Zero-shot explanations from an ALOE-aligned SigLIP2 model, with input images above and model-inherent B-cos attributions for matching text prompts below." width="100%">
+</p>
+
+ALOE publishes vision encoders only. Pair a SigLIP2-family checkpoint with the original SigLIP2 text encoder named in its config, then pass normalized text features to `explain_language_features` to explain image-text cosine similarity:
+
+```python
+import torch
+import torch.nn.functional as F
+from PIL import Image
+from transformers import AutoImageProcessor, AutoModel, AutoTokenizer, Siglip2TextModel
+
+repo_id = "rmaser/aloe-siglip2-base"
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+processor = AutoImageProcessor.from_pretrained(repo_id, trust_remote_code=True)
+image_model = AutoModel.from_pretrained(repo_id, trust_remote_code=True).to(device)
+image_model.eval()
+
+text_model_id = image_model.config.aloe_base_model_name
+tokenizer = AutoTokenizer.from_pretrained(text_model_id)
+text_model = Siglip2TextModel.from_pretrained(text_model_id).to(device)
+text_model.eval()
+
+labels = ["a person eating spaghetti", "a person playing guitar", "a person running"]
+prompts = [f"This is a photo of {label}.".lower() for label in labels]
+tokens = tokenizer(
+    prompts,
+    padding="max_length",
+    truncation=True,
+    max_length=64,
+    return_tensors="pt",
+).to(device)
+
+with torch.no_grad():
+    text_features = F.normalize(text_model(**tokens).pooler_output, dim=-1)
+
+image = Image.open("image.jpg").convert("RGB")
+pixel_values = processor(images=image, return_tensors="pt").pixel_values.to(device)
+
+explanation = image_model.explain_language_features(
+    pixel_values,
+    text_features,
+    idx=None,
+)
+# explanation["explanation"]         — RGBA attribution overlay, (1, H, W, 4)
+# explanation["contribution_map"]    — input×gradient map, (1, 1, H, W)
+# explanation["explained_class_idx"] — index into labels
+```
+
+`idx=None` explains the highest-scoring label; pass a label index to explain a specific prompt. Explanation calls currently expect one input image at a time.
 
 For code that needs this repository's Hydra/model-factory path, use `aloe_model_loader.py`. It is intentionally thin and delegates to `src.models.model_loader`.
 
