@@ -17,12 +17,18 @@ from .modules.pooler import AloeSiglip2MultiheadAttentionPoolingHead
 
 
 def _init_siglip2_attention_pooling_head(module: AloeSiglip2MultiheadAttentionPoolingHead) -> None:
-    """Xavier-init learned probe, fused KV weights, and B-cos attention output projection."""
-    init.xavier_uniform_(module.probe)
+    """Xavier-init the SigLIP2 pooler without replacing loaded view-backed weights."""
+    if not getattr(module.probe, "_is_hf_initialized", False):
+        init.xavier_uniform_(module.probe)
     init.xavier_uniform_(module.attention.q_proj.weight)
-    kv_w = module.attention.kv_proj.weight.view(2, module.attention.embedding_dim, module.attention.embedding_dim)
-    for i in range(2):
-        init.xavier_uniform_(kv_w[i])
+    if not getattr(module.attention.kv_proj.weight, "_is_hf_initialized", False):
+        kv_w = module.attention.kv_proj.weight.view(
+            2,
+            module.attention.embedding_dim,
+            module.attention.embedding_dim,
+        )
+        for i in range(2):
+            init.xavier_uniform_(kv_w[i])
     init.xavier_uniform_(module.attention.out_proj.linear.weight)
 
 
@@ -74,5 +80,4 @@ class AloeSiglip2VisionModel(AloePreTrainedVisionModel):
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
         )
-
 

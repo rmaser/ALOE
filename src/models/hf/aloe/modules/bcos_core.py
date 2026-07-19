@@ -157,19 +157,39 @@ class BcosUnnormedLinear(BcosLinear):
     """
     B-cos linear with **unnormed** (standard ``nn.Linear``) weights — the
     variant used in ALOE transformers.
+
+    Initialize this variant directly so Transformers 5 meta-tensor loading
+    never observes a normalized parameter that is immediately discarded.
     """
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        device = kwargs.get("device")
-        dtype = kwargs.get("dtype")
+    def __init__(
+        self,
+        in_features: int,
+        out_features: int,
+        bias: bool = False,
+        device=None,
+        dtype=None,
+        b: Union[int, float] = 2,
+        max_out: int = 1,
+        detach_output: bool = False,
+    ) -> None:
+        if bias:
+            raise ValueError("BcosUnnormedLinear does not support bias.")
+        DetachableModule.__init__(self)
+        self.in_features = in_features
+        self.out_features = out_features
+        self.bias = None
+        self.b = b
+        self.max_out = max_out
+        self.detach_output = detach_output
         self.linear = nn.Linear(
-            self.in_features,
-            self.out_features * self.max_out,
+            in_features,
+            out_features * max_out,
             bias=False,
             device=device,
             dtype=dtype,
         )
+        nn.init.kaiming_uniform_(self.linear.weight, a=math.sqrt(5))
 
 
 class BcosUnnormedLinear_v2(BcosUnnormedLinear):
@@ -429,7 +449,7 @@ class BcosUnnormedConv2d_v2(BcosUnnormedConv2d):
         if self.b == 2:
             dynamic_scaling = maybe_detached_out.abs() / (norm_x * norm_w)
         else:
-            abs_cos = (maybe_detached_out / norm_x * norm_w).abs() + 1e-6
+            abs_cos = (maybe_detached_out / (norm_x * norm_w)).abs() + 1e-6
             dynamic_scaling = abs_cos.pow(self.b - 1)
 
         return dynamic_scaling * out

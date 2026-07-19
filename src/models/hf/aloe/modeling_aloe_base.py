@@ -232,9 +232,12 @@ class AloePreTrainedVisionModel(BcosUtilMixin, PreTrainedModel):
             return True
         if isinstance(module, AloeAttention):
             # Init each QKV block independently (same variance as 3 separate xavier inits).
-            w = module.qkv_proj.weight.view(3, module.embed_dim, module.embed_dim)
-            for i in range(3):
-                init.xavier_uniform_(w[i])
+            # Transformers 5 marks the original Parameter after loading, while
+            # the view below does not inherit that marker.
+            if not getattr(module.qkv_proj.weight, "_is_hf_initialized", False):
+                w = module.qkv_proj.weight.view(3, module.embed_dim, module.embed_dim)
+                for i in range(3):
+                    init.xavier_uniform_(w[i])
             init.xavier_uniform_(module.out_proj.linear.weight)
             return True
         if isinstance(module, AloeMLP):

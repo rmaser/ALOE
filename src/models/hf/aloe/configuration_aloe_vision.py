@@ -21,6 +21,12 @@ BackboneName = Literal["siglip2", "dinov3", "vit"]
 AloeBcosImpl = Literal["v1", "v2"]
 
 
+def _validate_aloe_bcos_impl(value: Any) -> None:
+    """Reject invalid implementations before cooperative HF config dispatch."""
+    if value not in ("v1", "v2"):
+        raise ValueError(f"aloe_bcos_impl must be 'v1' or 'v2', got {value!r}")
+
+
 class AloeVisionConfig(PretrainedConfig):
     """
     Shared ALOE vision settings (B-cos hyperparameters, registers, pooler, position mode).
@@ -219,6 +225,7 @@ class AloeSiglip2VisionConfig(Siglip2VisionConfig, AloeVisionConfig):
         attention_dropout: float = 0.0,
         **kwargs: Any,
     ) -> None:
+        _validate_aloe_bcos_impl(aloe_bcos_impl)
         merged = {**_aloe_kw(
             aloe_patch_size, aloe_in_channels, aloe_feature_dim, aloe_cls_token,
             aloe_num_registers, aloe_b_conv, aloe_b_linear, aloe_add_conv_stem,
@@ -320,6 +327,7 @@ class AloeDinoV3VisionConfig(Dinov2Config, AloeVisionConfig):
         attention_dropout: float = 0.0,
         **kwargs: Any,
     ) -> None:
+        _validate_aloe_bcos_impl(aloe_bcos_impl)
         merged = {**_aloe_kw(
             aloe_patch_size, aloe_in_channels, aloe_feature_dim, aloe_cls_token,
             aloe_num_registers, aloe_b_conv, aloe_b_linear, aloe_add_conv_stem,
@@ -417,6 +425,7 @@ class AloeViTVisionConfig(ViTConfig, AloeVisionConfig):
         attention_probs_dropout_prob: float = 0.0,
         **kwargs: Any,
     ) -> None:
+        _validate_aloe_bcos_impl(aloe_bcos_impl)
         merged = {**_aloe_kw(
             aloe_patch_size, aloe_in_channels, aloe_feature_dim, aloe_cls_token,
             aloe_num_registers, aloe_b_conv, aloe_b_linear, aloe_add_conv_stem,

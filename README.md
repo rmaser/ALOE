@@ -4,6 +4,8 @@ This is the public code repository for **ALOE** (**AL**ign **O**nce to **E**xpla
 
 ALOE converts strong ViT-style foundation models into inherently interpretable B-cos visual backbones through one-time, label-free feature alignment. The aligned backbone can then be used as a drop-in encoder for downstream evaluation while producing model-inherent B-cos explanations.
 
+**Links:** [ALOE models](https://huggingface.co/collections/rmaser/aloe-69b285dfeee175d442f28232) · [ALOEv2 models](https://huggingface.co/collections/rmaser/aloev2-6a5ca2fceb4485f945461a5c) · [Paper (CVPR 2026)](https://openaccess.thecvf.com/content/CVPR2026/html/Maser_Align_Once_to_Explain_Feature_Alignment_for_Scalable_B-cosification_of_CVPR_2026_paper.html)
+
 ## Highlights
 
 - Label-free alignment from frozen supervised ViT, DINOv3, and SigLIP2 teachers.
@@ -29,9 +31,13 @@ All values below are from the paper and are reported on ImageNet-1k. Linear prob
 
 Across 10-dataset ViT-B/16 frozen-feature linear evaluation, ALOE improves over vanilla B-cosification by +13.24 points for supervised ViT, +7.62 points for SigLIP2, and +15.82 points for DINOv3 while staying close to the original teacher models.
 
+### ALOEv2
+
+ALOEv2 is the multi-resolution DINOv3 follow-up. It fine-tunes the ALOE DINOv3 models with per-step 224/384/480-pixel sampling and corrects the selected distillation depths to include the final transformer block. This removes the train/evaluation resolution mismatch that hurt the original models on dense prediction while preserving classification quality and inherent B-cos explanations.
+
 ## Published Models
 
-The public model set contains eight ALOE backbones:
+The public ALOE model set contains eight backbones:
 
 | Hub repo | Teacher family | Architecture |
 | --- | --- | --- |
@@ -44,6 +50,26 @@ The public model set contains eight ALOE backbones:
 | `rmaser/aloe-siglip2-so400m` | SigLIP2 | ViT-so400m/16 |
 | `rmaser/aloe-siglip2-so400m-432` | SigLIP2 | ViT-so400m/16 at 432 px |
 
+Seven ALOE checkpoints include their trained ImageNet-1k linear-probe classifier:
+
+| Hub repo | Teacher family | Architecture |
+| --- | --- | --- |
+| `rmaser/aloe-dinov3-small-in1k-lp` | DINOv3 | ViT-S/16 |
+| `rmaser/aloe-dinov3-base-in1k-lp` | DINOv3 | ViT-B/16 |
+| `rmaser/aloe-dinov3-large-in1k-lp` | DINOv3 | ViT-L/16 |
+| `rmaser/aloe-siglip2-base-in1k-lp` | SigLIP2 | ViT-B/16 |
+| `rmaser/aloe-siglip2-large-in1k-lp` | SigLIP2 | ViT-L/16 |
+| `rmaser/aloe-siglip2-so400m-in1k-lp` | SigLIP2 | ViT-so400m/16 |
+| `rmaser/aloe-siglip2-so400m-432-in1k-lp` | SigLIP2 | ViT-so400m/16 at 432 px |
+
+ALOEv2 provides matching DINOv3 backbones and ImageNet-1k classifiers:
+
+| Backbone | ImageNet-1k classifier |
+| --- | --- |
+| `rmaser/aloe-v2-dinov3-small` | `rmaser/aloe-v2-dinov3-small-in1k-lp` |
+| `rmaser/aloe-v2-dinov3-base` | `rmaser/aloe-v2-dinov3-base-in1k-lp` |
+| `rmaser/aloe-v2-dinov3-large` | `rmaser/aloe-v2-dinov3-large-in1k-lp` |
+
 ## Loading ALOE Models
 
 Published ALOE checkpoints use custom Hugging Face `transformers` code, so load them with `trust_remote_code=True`.
@@ -54,6 +80,20 @@ from transformers import AutoImageProcessor, AutoModel
 repo_id = "rmaser/aloe-dinov3-base"
 processor = AutoImageProcessor.from_pretrained(repo_id, trust_remote_code=True)
 model = AutoModel.from_pretrained(repo_id, trust_remote_code=True)
+model.eval()
+```
+
+Load a checkpoint with its ImageNet-1k classifier through the classification auto class:
+
+```python
+from transformers import AutoImageProcessor, AutoModelForImageClassification
+
+repo_id = "rmaser/aloe-dinov3-base-in1k-lp"
+processor = AutoImageProcessor.from_pretrained(repo_id, trust_remote_code=True)
+model = AutoModelForImageClassification.from_pretrained(
+    repo_id,
+    trust_remote_code=True,
+)
 model.eval()
 ```
 
